@@ -152,6 +152,15 @@ class BufferPoolManager {
    */
   void FlushAllPagesImpl();
 
+  /** seek the page table, get frame_id by page_id */
+  frame_id_t GetFrameByPage(page_id_t page_id);
+
+  /** get frame from victim */
+  frame_id_t GetReplacedFrame();
+
+  /** Flushes the target page to disk. */
+  bool MyFlushPage(page_id_t page_id);
+
   /** Number of pages in the buffer pool. */
   size_t pool_size_;
   /** Array of buffer pool pages. */

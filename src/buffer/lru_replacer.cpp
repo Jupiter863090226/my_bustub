@@ -60,36 +60,29 @@ void LRUReplacer::delete_node(frame_id_t frame_id){
 }
 
 bool LRUReplacer::Victim(frame_id_t *frame_id) {
-    latch_.lock();
     if(replacable_frames_ == 0){
         *frame_id = INVALID_PAGE_ID;
-        latch_.unlock();
         return false;
     }
     
     *frame_id = tail_->frame_id;
     delete_node(tail_->frame_id);
     --replacable_frames_;
-    latch_.unlock();
     return true;
 }
 
 void LRUReplacer::Pin(frame_id_t frame_id) {
-    latch_.lock();
     if(map_.find(frame_id) != map_.end()){
         delete_node(frame_id);
         --replacable_frames_;
     }
-    latch_.unlock();
 }
 
 void LRUReplacer::Unpin(frame_id_t frame_id) {
-    latch_.lock();
     if(map_.find(frame_id) == map_.end()){
         add_head(frame_id);
         ++replacable_frames_;
     }
-    latch_.unlock();
 }
 
 size_t LRUReplacer::Size() {

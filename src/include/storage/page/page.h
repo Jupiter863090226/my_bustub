@@ -42,11 +42,26 @@ class Page {
   /** @return the page id of this page */
   inline page_id_t GetPageId() { return page_id_; }
 
+  /** set the page id of this page */
+  inline void SetPageId(page_id_t page_id) { page_id_ = page_id; }
+
   /** @return the pin count of this page */
   inline int GetPinCount() { return pin_count_; }
 
+  /** set the pin count of this page */
+  inline void SetPinCount(int pin_count) { pin_count_ = pin_count; }
+
+  /** add the pin count of this page */
+  inline void AddPinCount() { ++pin_count_; }
+
+  /** sub the pin count of this page */
+  inline void SubPinCount() { --pin_count_; }
+
   /** @return true if the page in memory has been modified from the page on disk, false otherwise */
   inline bool IsDirty() { return is_dirty_; }
+
+  /** set the dirty flag of this page */
+  inline void SetDirty(bool is_dirty) { is_dirty_ = is_dirty; }
 
   /** Acquire the page write latch. */
   inline void WLatch() { rwlatch_.WLock(); }
@@ -65,6 +80,14 @@ class Page {
 
   /** Sets the page LSN. */
   inline void SetLSN(lsn_t lsn) { memcpy(GetData() + OFFSET_LSN, &lsn, sizeof(lsn_t)); }
+
+  /** Reset this page. */
+  void Reset() {
+      ResetMemory();
+      page_id_ = INVALID_PAGE_ID;
+      pin_count_ = 0;
+      is_dirty_ = false;
+  }
 
  protected:
   static_assert(sizeof(page_id_t) == 4);
